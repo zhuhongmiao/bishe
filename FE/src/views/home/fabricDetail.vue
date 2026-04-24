@@ -47,7 +47,7 @@ const router = useRouter()
 const fabric = ref(null)
 const loading = ref(true)
 
-const imageUrl = computed(() => `https://picsum.photos/900/900?random=${route.params.id}`)
+const imageUrl = computed(() => getItemImage(route.params.id))
 
 const baseFields = computed(() => {
   if (!fabric.value) return []
@@ -63,7 +63,27 @@ const baseFields = computed(() => {
     { label: FIELD_LABELS.like, value: fabric.value.like ?? '暂无 / N/A' },
   ]
 })
+const getItemImage = (id) => {
+  const MIN = 1
+  const MAX = 4896
+  const RANGE = MAX - MIN + 1
 
+  const str = String(id)
+
+  // FNV-1a 32位哈希
+  let hash = 2166136261
+
+  for (let i = 0; i < str.length; i++) {
+    hash ^= str.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
+  }
+
+  // 转成无符号整数
+  hash = hash >>> 0
+
+  const imgNum= MIN + (hash % RANGE)
+  return `/fabrics/${imgNum}.jpg`
+}
 const getFabricDetail = async () => {
   loading.value = true
   try {

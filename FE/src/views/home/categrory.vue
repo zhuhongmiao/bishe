@@ -34,7 +34,7 @@
       >
         <div class="aspect-[4/3] overflow-hidden bg-slate-100">
           <img
-            :src="`https://picsum.photos/200/200?random=${item.id}`"
+            :src="getItemImage(item.id)"
             alt=""
             class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
           />
@@ -87,7 +87,27 @@ const currentCategoryLabel = computed(() => {
   const matched = categories.value.find((item) => item.value === currentCategory.value)
   return matched?.label || formatBilingualValue(currentCategory.value, '')
 })
+const getItemImage = (id) => {
+  const MIN = 1
+  const MAX = 4896
+  const RANGE = MAX - MIN + 1
 
+  const str = String(id)
+
+  // FNV-1a 32位哈希
+  let hash = 2166136261
+
+  for (let i = 0; i < str.length; i++) {
+    hash ^= str.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
+  }
+
+  // 转成无符号整数
+  hash = hash >>> 0
+
+  const imgNum= MIN + (hash % RANGE)
+  return `/fabrics/${imgNum}.jpg`
+}
 const getFabrics = () => {
   api
     .fabrics({

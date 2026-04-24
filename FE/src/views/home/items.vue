@@ -37,7 +37,28 @@ const father = useTemplateRef('father')
 const loadmore = useTemplateRef('loadmore')
 let observer = null
 
-const getItemImage = (id) => `https://picsum.photos/200/200?random=${id}`
+// const getItemImage = (id) => `https://picsum.photos/200/200?random=${id}`
+const getItemImage = (id) => {
+  const MIN = 1
+  const MAX = 4896
+  const RANGE = MAX - MIN + 1
+
+  const str = String(id)
+
+  // FNV-1a 32位哈希
+  let hash = 2166136261
+
+  for (let i = 0; i < str.length; i++) {
+    hash ^= str.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
+  }
+
+  // 转成无符号整数
+  hash = hash >>> 0
+
+  const imgNum= MIN + (hash % RANGE)
+  return `/fabrics/${imgNum}.jpg`
+}
 
 const handleImageError = (event) => {
   event.target.src = '/bg1.jpg'
