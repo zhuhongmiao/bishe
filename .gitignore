@@ -18,3 +18,7 @@ Thumbs.db
 
 # Node
 FE/node_modules/
+node_modules/
+
+# Uploads
+FE/public/fabrics/
